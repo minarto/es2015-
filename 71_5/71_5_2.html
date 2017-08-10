@@ -1,0 +1,443 @@
+<html><head></head>
+<body>
+<section id='todo'></section>
+<script>
+const TaskState = class{
+    static addState(key, cls){
+        const v = new cls;
+        
+        if(!(v instanceof TaskState))   throw   'invalid cls';
+        if((TaskState._subClasses || (TaskState._subClasses = new Map())).has(key)) throw   'exist key';
+
+        TaskState._subClasses.set(key, cls);
+    }
+    static getState(type){
+        return  new (TaskState._subClasses.get(type));
+    }
+    isComplete(){
+        throw   'must be overrided';
+    }
+    get order(){
+        throw   'must be overrided';
+    }
+    stateList(){
+        return  Array.from(TaskState._subClasses.keys());
+    }
+    [Symbol.toPrimitive](hint){
+        for(const [k, cls] of TaskState._subClasses){
+            if(this instanceof cls) return  k;
+        }
+    }
+}
+TaskState.addState('waiting', class extends TaskState{
+    isComplete(){   return  false;  }
+    get order(){    return  1;  }
+});
+TaskState.addState('wolking', class extends TaskState{
+    isComplete(){   return  false;  }
+    get order(){    return  2;  }
+});
+TaskState.addState('closed', class extends TaskState{
+    isComplete(){   return  true;  }
+    get order(){    return  3;  }
+});
+TaskState.addState('canceled', class extends TaskState{
+    isComplete(){   return  true;  }
+    get order(){    return  4;  }
+});
+TaskState.addState('resolved', class extends TaskState{
+    isComplete(){   return  true;  }
+    get order(){    return  5;  }
+});
+
+const Listener = class{
+    listen(){
+        throw   'must be overrided';
+    }
+}
+const Task = class extends Listener{
+    static getTask(type, title){
+        switch(type)
+        {
+            case 'item' : return    new TaskItem(title);
+            case 'list' : return    new TaskList(title);
+            default :   throw   'invalid type';
+        }
+    }
+    constructor(title){
+        super();
+        this._list = [];
+        this._listener = new Set();
+    }
+    listen(type){
+        this._notify(type);
+    }
+    _notify(type){
+        this._listener.forEach(v => v.listen(type));
+    }
+    addListener(listener){
+        this._listener.add(listener);
+        return  this;
+    }
+    removeListener(listener){
+        this._listener.delete(listener);
+        return  this;
+    }
+    add(task){
+        this._list.push(task.addListener(this));
+        this._notify('added');
+    };
+    remove(task){
+        const l = this._list;
+        if(l.includes(task))   l.splice(l.indexOf(task), 1);
+        task.removeListener(this);
+
+        this._notify('removed');
+    }
+    getResult(sort, state){
+        const l = this._list;
+
+        let result = [];
+
+        if(state)   result = [ l.filter(v => !v.isComplete()), l.filter(v => v.isComplete())].reduce((p,c) => p.concat(c.sort(sort)), []);
+        else    result =  [...l].sort(sort);
+
+        return  {
+            item    :   this._getResult(),
+            children    :   result.map(v => v.getResult(sort, state))
+        };
+    }
+    _getResult(sort, state){
+        throw   'must be overided';
+    }
+    save(){
+        let v = JSON.stringify(this);
+        v = v.substring(1, v.length - 1);
+        v = v.replace(/\\(n|t)?/g, '')
+
+        return  v;
+    }
+    restore(data){
+        const v = typeof data === 'string' ? JSON.parse(data) : data;
+        
+        this._list.length = 0;
+        v.list.forEach(v => {
+            this._list.push(Task.getTask(v.type, 'default').restore(v));
+        });
+        this._restore(v);
+        this._notify('restore');
+        return  this;
+    }
+    _restore(){
+        throw   'must be overided';
+    }
+}
+const TaskItem = class extends Task{
+    static title(a,b){
+        return  a.sortTitle(b);
+    }
+    static date(a,b){
+        return  a.sortDate(b);
+    }
+    static state(a,b){
+        return  a.sortState(b);
+    }
+    static register(a,b){
+        return  null;
+    }
+    constructor(title){
+        super();
+
+        this._title = title;
+        this._date = new Date();
+        this._state = TaskState.getState('waiting');
+
+    }
+    _restore({title, date, state}){
+       this._title = title;
+       this._date = new Date(Date.parse(date));
+       this._state = TaskState.getState(state);
+    }
+    toJSON(){
+        return  `{
+            "type":"item",
+            "title":"${this._title}",
+            "date":"${this._date.toISOString()}",
+            "state":"${this._state + ''}",
+            "list":[${this._list.map(v => v.toJSON()).join(',')}]
+        }`;
+    }
+
+    get date(){
+        //return  this._date.toJSON();  //  아래구문과 결과가 같음
+        return  this._date.toISOString();
+    };
+    get title(){
+        return  this._title;
+    };
+    get state(){
+        return  this._state;
+    }
+    _getResult(sort, state){
+        return  this;
+    }
+    isComplete(){
+        return  this._state.isComplete();
+    }
+    setState(type){
+        this._state = TaskState.getState(type);
+        this._notify('state');
+    }
+    sortTitle(task){
+        return  this._title > task._title;
+    }
+    sortDate(task){
+        return  this._date > task._date;
+    }
+    sortState(task){
+        return  this._state.order > task._state.order;
+    }
+};
+const TaskList = class extends Task{
+    constructor(title){
+        super();
+        this._title = title;
+        this._sort = "register";
+    };
+    _restore({title, sort}){
+       this._title = title;
+       this._sort = sort;
+    }
+    toJSON(){
+        return  `{
+            "type":"list",
+            "title":"${this._title}",
+            "sort":"${this._sort}",
+            "list":[${this._list.map(v => v.toJSON()).join(',')}]
+        }`;
+    }
+
+    get title(){
+        return  this._title;
+    }
+
+    get sort(){
+        return  this._sort;
+    }
+    set sort(v){
+        this._sort = v;
+    }
+    
+    _getResult(sort, state){
+        return  this._title;
+    };
+};
+const TaskCommand = class{
+    constructor(task, method, ...param){
+        this._task = task;
+        this._method = method;
+        this._param = param;
+        this._cur = null;
+    }
+
+    call(){
+        this._task[this._method](...this._param);
+        this._cur = this._task.save();
+    }
+
+    set(){
+        this._task[this._method] = this._param[0];
+        this._cur = this._task.save();
+    }
+
+    rollback(){
+        console.log(this._cur)
+        this._task.restore(this._cur);
+    }
+};
+const Dr = class extends Listener{
+    static el(type, ...attr){
+        const el = document.createElement(type);
+
+        for(let i = 0; i<attr.length;){
+            const k = attr[i++], v = attr[i++];
+
+            if(typeof el[k] === 'function')    el[k].apply(el, Array.isArray(v) ? v : [v]);
+            else if(k[0] === '@')   el.style[k.substr(1)] = v;
+            else    el[k] = v;
+        }
+
+        return  el;
+    }
+
+    listen(type){
+        this.render();
+    }
+
+    constructor(taskList, parent){
+        super();
+        this._list= taskList;
+        this._parent = parent;
+        this._list.addListener(this);
+        this._commands = [];
+        this._cmdIndex = -1;
+    }
+
+    sort(s){
+        this._cmd(new TaskCommand(this._list, 'sort', s)).set();
+    }
+    _cmd(cmd){
+        this._commands.length = this._cmdIndex + 1;
+        this._cmdIndex = this._commands.push(cmd) - 1;
+        
+        return  cmd;
+    }
+    remove(parent, taskItem){
+        this._cmd(new TaskCommand(parent, 'remove', taskItem)).call();
+    }
+
+    setState(taskItem, type){
+        this._cmd(new TaskCommand(taskItem, 'setState', type)).call();
+    }
+
+    add(task, title){
+        this._cmd(new TaskCommand(task, 'add', new TaskItem(title))).call();
+    }
+
+    undo(){
+        if(this._cmdIndex < 0)  return;
+        const c = this._commands[--this._cmdIndex];
+
+        c.rollback();
+    }
+
+    redo(){
+        ++ this._cmdIndex;
+        if(this._cmdIndex >= this._commands.length)  return;
+        const c = this._commands[this._cmdIndex];
+        
+        
+        c.rollback();
+    }
+
+    render(){
+        const parent = document.querySelector(this._parent);
+
+        parent.innerHTML = '';
+
+        const visitor = new Visitor(this,  parent);
+        visitor.render(this._list, this._list.sort, true);
+    }
+};
+const Visitor = class{
+    constructor(renderer, el){
+        this._renderer = renderer;
+        this._parent = el;
+        this._current = null;
+    }
+
+    render(task, sort, state, parent){
+        const s = TaskItem[sort];
+
+        switch(true)
+        {
+            case task instanceof TaskItem :
+                this._item(task, parent);
+                break;
+            case task instanceof TaskList :
+                this._list(task);
+                break;
+        }
+
+        this._startSub();
+        task.getResult(s, state).children.forEach(({item}) => this.render(item, s, state, task));
+        this._endSub();
+    }
+
+    _list(taskList){
+        const r = this._renderer;
+         [
+            Dr.el('textarea', '@cssText', 'width:90%;height:300px;', 'id', 'data'),
+            Dr.el('h2', 'innerHTML', taskList.title),
+            'register,state,title,date'.split(',').reduce((p,c) => {
+                p.appendChild(Dr.el('button', 'innerHTML', c,
+                 'addEventListener', ['click', e => r.sort(c)]));
+                return  p;
+            }, Dr.el('nav')), 
+            Dr.el('section',
+                'appendChild', Dr.el('button', 'innerHTML', 'save',
+                   'addEventListener', [
+                       'click', e => (document.getElementById('data').value = taskList.save())
+                    ]),
+                'appendChild', Dr.el('button', 'innerHTML', 'restore',
+                   'addEventListener', [
+                       'click', e => taskList.restore(document.getElementById('data').value)
+                    ]),
+                'appendChild', Dr.el('button', 'innerHTML', 'undo',
+                   'addEventListener', [
+                       'click', e => r.undo()
+                    ]),
+                'appendChild', Dr.el('button', 'innerHTML', 'redo',
+                   'addEventListener', [
+                       'click', e => r.redo()
+                    ])
+            ),
+            Dr.el('section',
+                'appendChild', Dr.el('input', 'type', 'text'), 
+                'appendChild', Dr.el('button', 'innerHTML', 'add task',
+                   'addEventListener', [
+                       'click', e => r.add(taskList, e.target.previousSibling.value)
+                    ])
+            )
+        ].forEach(v => this._parent.appendChild(v));
+
+        this._current = this._parent;
+        this._current.color = 255;
+    }
+    _item(taskItem, parent){
+        const r = this._renderer;
+
+        [
+            Dr.el('h3', 'innerHTML', taskItem.title
+            , '@textDecoration', taskItem.isComplete() ? 'line-though' : 'none'
+            ),
+            Dr.el('time', 'innerHTML', taskItem.date, 'dateTime', taskItem.date),
+            taskItem.state.stateList().reduce((select, v) => {
+                select.appendChild(Dr.el('option', 'value', v, 'innerHTML', v,
+                    'selected', taskItem.state + '' == v ? true : false));
+                return  select;
+            }, Dr.el('select')),
+            Dr.el('button', 'innerHTML', 'change',
+                'addEventListener', [
+                    'click', e => r.setState(taskItem, e.target.previousSibling.value)
+                ]
+            ),
+            Dr.el('button', 'innerHTML', 'remove',
+                'addEventListener', [
+                    'click', e => r.remove(parent, taskItem)
+                ]
+            ),
+            Dr.el('input', 'type', 'text'),
+            Dr.el('button', 'innerHTML', 'add task',
+                'addEventListener', [
+                    'click', e => r.add(taskItem, e.target.previousSibling.value)
+            ])
+        ].forEach(v => this._current.appendChild(v));
+    }
+    _startSub(){
+        const c = parseInt(this._current.color, 10) - 25;
+        this._current = this._current.appendChild(Dr.el('section',
+            'color', c,
+            '@marginLeft', '15px',
+            '@backgroundColor', `rgb(${c}, ${c}, ${c})`));
+    }
+    _endSub(){
+        this._current = this._current.parentNode;
+    }
+}
+const todo = new Dr(new TaskList('list1'), '#todo');
+todo.render();
+
+</script>
+</body>
+</html>
