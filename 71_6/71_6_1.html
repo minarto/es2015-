@@ -381,11 +381,20 @@ const Dr = class extends Listener{
 
         parent.innerHTML = '';
 
-        const visitor = new Visitor(this,  parent, new MemoItem(new BaseItem()));
+        const visitor = new Visitor(this,  parent, ItemDeco.getItem('complete', 'memo'));
         visitor.render(this._list, this._list.sort, true);
     }
 };
 const ItemDeco = class{
+    static getItem(...cls){
+        return  cls.reduce((p, cls) => {
+            switch(cls){
+                case 'complete' :   return  new CompleteDateItem(p);
+                case 'memo' :   return  new MemoItem(p);
+                default :  throw    'invalid cls';
+            }
+        }, new BaseItem())
+    }
     constructor(deco){
         this._deco = deco;
     }
