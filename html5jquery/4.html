@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title></title>
+        <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+        <style type="text/css">
+            p{
+                margin: 9px; font-size: 16px; color: gray;
+            }
+            .highlight{
+                background-color: yellow; color:red;
+            }
+        </style>
+        <script>
+            $(document).ready(function(){
+                $('input').hover(function(){
+                    $(this).addClass('highlight');
+                }, function(){
+                    $(this).removeClass('highlight');
+                });
+            })
+            
+        </script>
+    </head>
+    
+
+    <body>
+        <input id='test1' type="button" value='test1'/>
+        <input id='test2' type="button" value='test2'/>
+        <input id='test3' type="button" value='test3'/>
+    </body>
+</html>
