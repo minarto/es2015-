@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8" />
+        <title></title>
+        <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+        <script type="text/javascript">
+        	$(document).ready(function(){
+        		$('#btnHide').bind('click', function(){
+        			$('#img').hide();
+        		});
+        		$('#btnShow').bind('click', function(){
+        			$('#img').show();
+        		})
+
+        	})
+    		
+    	</script>
+    </head>
+    
+
+    <body>
+    	<input type="button" id="btnHide" value="btnHide" ></button>
+    	<input type="button" id="btnShow" value="btnShow" ></button>
+    	<br/>
+    	<img id="img" src="https://tistory3.daumcdn.net/tistory/1484996/skin/images/logo.gif">
+	</body>
+</html>
