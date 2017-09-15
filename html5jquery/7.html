@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8" />
+        <title></title>
+        <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+    </head>
+    
+
+    <body>
+        <input id='btn1' type="button" value='슬라이드업'/>
+        <input id='btn2' type="button" value='슬라이드다운'/>
+        <input id='btn3' type="button" value='페이드인'/>
+        <input id='btn4' type="button" value='페이드아웃'/>
+
+        <img id='img1' src='https://tistory3.daumcdn.net/tistory/1484996/skin/images/logo.gif' />
+
+        <button class='first'>start</button>
+        <button class='second'>goal</button>
+        <br>
+        <p>213131313</p>
+        
+
+
+        <script type="text/javascript">
+            $('#btn1').click(
+                function(){
+                    $('#img1').slideUp(1000);
+                }
+            );
+            $('#btn2').click(
+                function(){
+                    $('#img1').slideDown(1000);
+                }
+            );
+            $('#btn3').click(
+                function(){
+                    $('#img1').fadeIn(1000);
+                }
+            );
+            $('#btn4').click(
+                function(){
+                    $('#img1').fadeOut(1000);
+                }
+            );
+
+            $('button.first').click(
+                function(){
+                    $('p').animate({
+                        marginLeft:'200px',
+                        fontSize:'50px'
+                    }, 1000);
+
+                }
+            );
+            $('button.second').click(
+                 function(){
+                    $('p').animate({
+                        marginLeft:'0',
+                        fontSize:'12px'
+                    }, 1000);
+
+                }
+            );
+        </script>
+	</body>
+</html>
