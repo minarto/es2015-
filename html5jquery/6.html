@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8" />
+        <title></title>
+        <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+    </head>
+    
+
+    <body>
+        <img id='img1' src='https://tistory3.daumcdn.net/tistory/1484996/skin/images/logo.gif' />
+        
+        <script type="text/javascript">
+            $('#img1').mouseover(
+                function(){
+                    $(this).attr('src', 'https://books.google.com/books/content/images/frontcover/PbG4CwAAQBAJ?fife=w300-rw');
+                }
+            ).mouseout(
+                function(){
+                    $(this).attr('src', 'https://tistory3.daumcdn.net/tistory/1484996/skin/images/logo.gif');
+                }
+            );
+        </script>
+	</body>
+</html>
