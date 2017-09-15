@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8" />
+        <title></title>
+        <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+    </head>
+    
+
+    <body>
+    	<input type="text" id="txt" size='50' name='text'></input>
+        <input type="button" id='btn0' value="print0"></button>
+        <input type="button" id='btn1' value="print1"></button>
+        <br>
+        <div id='view1'></div>
+        <div id='view2'></div>
+        <script type="text/javascript">
+            $('#btn0').click(
+                function(){
+                    let obj = $('#txt').val();
+                    $('#view1').text(obj);
+                }
+            );
+            $('#btn1').click(
+                function(){
+                    let obj = $('#txt').val();
+                    $('#view2').text(obj);
+                }
+            );
+        </script>
+	</body>
+</html>
