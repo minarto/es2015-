@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8" />
+        <title></title>
+        <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                var v = document.getElementById('mov1');
+            	$('#play').click(function(){
+            		v.play();
+            	});
+            	$('#pause').click(function(){
+            		v.pause();
+            	});
+                $('#mute').click(function(){
+                    v.volume = 0;
+                });
+                $('#unmute').click(function(){
+                    v.volume = 1;
+                });
+            });
+        </script>
+        <style type="text/css">
+        </style>
+    </head>
+    
+
+    <body>
+        
+        
+        <video id="mov1" src="video/ladymov.mp4" width="400px" height="300px"></video><br>
+        <button id="play">play</button>
+        <button id="pause">pause</button>
+        <button id="mute">mute</button>
+        <button id="unmute">unmute</button>
+        
+	</body>
+</html>
