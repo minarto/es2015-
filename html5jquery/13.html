@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8" />
+        <title></title>
+        <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $("#show").click(function(){
+                    var str = $("form").serialize();
+                    $("#result").text(str);
+                })
+                
+            })
+        </script>
+        <style type="text/css">
+            
+        </style>
+    </head>
+    
+
+    <body>
+        <form>
+            <input type="text" name="name"><br>
+            <input type="checkbox" name="hobby1" value="climb">등산
+            <input type="checkbox" name="hobby2" value="climb">낚시
+            <input type="checkbox" name="hobby3" value="climb">여행<br>
+            <input type="button" value="등록" id="show">
+        </form><br><br>
+        <div id="result"></div>
+	</body>
+</html>
