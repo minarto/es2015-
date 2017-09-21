@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8" />
+        <title></title>
+        <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $.getScript("13_2.js");
+
+                $("#submit").click(function(){
+                    var str = $("form").serialize();
+
+                    var rs = splitProc(str);
+
+                    $("#result").text(rs);
+                })
+                
+            })
+        </script>
+        <style type="text/css">
+            
+        </style>
+    </head>
+    
+
+    <body>
+        <form>
+            <table>
+                <tr>
+                    <td><label>아이디</label></td>
+                    <td><input type="text" name="id" id="id"></td>
+                    <td rowspan="2">
+                        <input type="button" id="submit" value="login">
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>비번</label></td>
+                    <td><input type="text" name="pwd" id="pwd"></td>
+                </tr>
+                
+            </table>
+        </form><br><br>
+        <div id="result"></div>
+	</body>
+</html>
