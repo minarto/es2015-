@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8" />
+        <title></title>
+        <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+        <script type="text/javascript">
+            function solution(S, T) {
+    var f = function(v)
+    {
+        var a = v.split(""), i = v.length, e, s, n;
+        while(i --)
+        {
+            w = parseFloat(a[i]);
+            if(!isNaN(w))
+            {
+                e = s = w;
+                if(s > 0)
+                {
+                    while(s--)
+                    {
+                        w = parseFloat(a[s]);
+                        if(isNaN(w))
+                        {
+                            ++ s;
+                            break;
+                        }
+                    }
+                }
+                n = parseFloat(v.substring(s, e + 1));
+                a.splice(s, e - s + 1);
+                
+                for(j=0; j<n; ++j)
+                {
+                    a.splice(s, 0, "?");
+                }
+                i = s + 1;
+            }
+        }
+        
+        return  a.join("");
+    }
+    
+    var rs = f(S), N = rs.length, rt = f(T);
+    var ars = rs.split(""), art = rt.split("");
+    alert(ars)
+    alert(art)
+    if(N == rt.length)
+    {
+        var i = N;
+        while(i --)
+        {
+            if((ars[i] != "?") && (art[i] != "?") && (ars[i] != art[i]))    return  false;
+        }
+        
+        return  true;
+    }
+    else
+    {
+        return  false;
+    }
+    // write your code in JavaScript (Node.js 6.4.0)
+}
+        </script>
+        <style type="text/css">
+            
+        </style>
+    </head>
+    
+
+    <body>
+        <input id='btn1' type="button" value='슬라이드토글'/>
+        <input id='btn2' type="button" value='토글'/>
+        <input id='btn3' type="button" value='복합'/>
+        <br>
+        <div id='info'>
+            <p>213131313</p>
+        </div>
+        
+        
+
+
+        <script type="text/javascript">
+            $('#btn1').click(
+                alert(solution("a10", "10a"))
+            );
+             $('#btn2').click(
+                function(){
+                    $('#info').toggle(1000);
+                }
+            );
+              $('#btn3').click(
+                function(){
+                    $('#info').show(1000).fadeOut(3000).slideDown(3000);
+                }
+            );
+        </script>
+	</body>
+</html>
