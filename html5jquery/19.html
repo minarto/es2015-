@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8" />
+        <title></title>
+        <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+            	$('#mov1').hide();
+            	$('#mov2').hide();
+            	
+            	$('#v1').click(function(){
+            		$('#mov2').hide();
+            		$('#mov1').show();
+            	});
+            	$('#v2').click(function(){
+            		$('#mov1').hide();
+            		$('#mov2').show();
+            	});
+            });
+        </script>
+        <style type="text/css">
+        </style>
+    </head>
+    
+
+    <body>
+        
+        <button id="v1">v1</button>
+        <button id="v2">v2</button><br>
+        
+        <audio id="mov1" width="400px" height="300px" controls>
+        	<source src="video/ladymov.mp4" type="video/mp4">
+        	<source src="video/ladymov.ogg" type="video/ogg">
+        </audio>
+        <audio id="mov2" width="400px" height="300px" controls>
+        	<source src="video/jelong.mp4" type="video/mp4">
+        	<source src="video/jelong.ogg" type="video/ogg">
+        </audio>
+        
+	</body>
+</html>
