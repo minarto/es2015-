@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8" />
+        <title></title>
+        <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $("#log1").show();
+                $("#log2").hide();
+
+                $("#log1").click(function(){
+                    var sid = $("#id").val();
+                    var spw = $("#pw").val();
+
+                    if(!sid || !spw)
+                    {
+                        $("#fail_result").text("아이디와 비번입력").css("color", "black");
+                    }
+                    else
+                    {
+                        $("#log1").hide();
+                        $("#log2").show();
+                        $("#ok_result").html(sid + "님이 로그인").css("color", "blue");
+                    }
+                })
+            });
+        </script>
+        <style type="text/css">
+            span{
+                font-size:15px;
+                font-weight: bold;
+                color: orange
+            }
+            #log1,#log2{
+                border: 1px dotted gray;
+                padding: 20px;
+                width: 350px;
+            }
+        </style>
+    </head>
+    
+
+    <body>
+        <div id="log1">
+            <span>계정과 패스워드를 입력</span>
+            <form id = "loginf">
+                <table>
+                    <tr>
+                        <td>계정</td>
+                        <td width="150px"><input type="text" id="id" name="id"></td>
+                        <td>
+                            <input type="button" id="loginb" name="loginb" value="로그인" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>패스워드</td>
+                        <td width="150px"><input type="password" id="pw" name="pw"></td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="="3"><div id="fail_result"></div></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div id="log2">
+            <p id="ok_result"></p>
+            <a href="15_gallery.html">갤러리이동</a>
+        </div>
+	</body>
+</html>
