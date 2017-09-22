@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8" />
+        <title></title>
+        <style id='s'>
+        	.test{background: #ff0}
+        	.test2{width:100%;}
+        </style>
+        <script>
+        	const el = document.getElementById('s');
+        	const sheet = el.sheet;
+        	const rules = sheet.cssRules;
+        	const rule = rules[0];
+
+        	console.log(rule.selectorText);
+        	console.log(rule.style.background);
+
+        	sheet.insertRule('.red{background:red}', rules.length);
+        	sheet.insertRule('.blue{background:blue}', 0);
+
+        	sheet.deleteRule(rules.length - 1);
+
+        	console.log(
+        		Array.from(rules).reduce(
+        			(p,c)=>p + `${c.cssText}\n`, ''
+        		)
+        	);
+		</script>
+		<body>
+
+		</body>
+	</head>
+</html>
