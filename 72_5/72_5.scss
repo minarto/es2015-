@@ -1,0 +1,47 @@
+#join{
+    [name="userid"]{border:5px solid #f00}
+    [name="pw"]{border:1px solid #0f0}
+    [name="nick"]{border:1px solid #00f}
+}
+[itemtype$="WebPage"]{
+    [itemprop="name"]{font-size:20px;padding:0;margin:10px 0}
+    [itemprop="breadcrumb"]{font-size:11px;margin:0 10px;color:#234A7F}
+    [itemprop="description"]{font-size:14px;line-height:20px;color:#444}
+    ul{list-style: none;padding: 0}
+    [itemprop="mainEntity"]{padding:0 20px;margin:10px;border:1px solid #999;border-radius:20px}
+    [itemprop="license"]{font-size:11px;color:#999}
+    [itemprop="publisher"]{font-size:12px;font-weight: bold;font-family: sans-serif}
+}
+[itemtype$="CollegeOrUniversity"]{
+    [itemprop="name"]{font-size:15px}
+    [itemprop="description"]{font-size:12px;line-height: 15px}
+}
+[data-type$="WebPage"]{
+    color:#900;
+    [data-name]{font-size:20px;padding:0;margin:10px 0}
+    [data-breadcrumb]{font-size:11px;margin:0 10px;color:#234A7F}
+    [data-description]{font-size:14px;line-height:20px;color:#444}
+    ul{list-style: none;padding: 0}
+    [data-mainEntity]{padding:0 20px;margin:10px;border:1px solid #999;border-radius:20px}
+    [data-license]{font-size:11px;color:#999}
+    [data-publisher]{font-size:12px;font-weight: bold;font-family: sans-serif}
+}
+[data-type$="CollegeOrUniversity"]{
+    [data-name]{font-size:15px}
+    [data-description]{font-size:12px;line-height: 15px}
+}
+[data-1="on"],[data-2="on"],[data-3="on"],[data-4="on"]{color:#0f0}
+[data-1="off"],[data-2="off"],[data-3="off"],[data-4="off"]{color:#f00}
+[data-1="on"]+[data-2="on"]+[data-3="on"]+[data-4="on"]+td{background:#0f0}
+[data-1="off"]+[data-2="off"]+[data-3="off"]+[data-4="off"]+td{background:#f00}
+@for $i from 1 through 4{
+    $ret:"";
+    @for $j from 1 through 4{
+    @if $j == $i {
+    $ret : $ret + '[data-' + $j + '="on"]';
+    } @else {
+    $ret: $ret + '[data-' + $j + '="off"]';
+    }
+    }
+    #{$ret}{background:#000};
+}
